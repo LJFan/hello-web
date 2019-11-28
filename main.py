@@ -20,4 +20,5 @@ def english():
 
 if __name__ == '__main__':
     print('Web Server is running...')
-    app.run(port='9999')
+    # app.run(port='9999')
+    app.run(host='0.0.0.0',port='9999')
