@@ -28,7 +28,8 @@ def par():
 @app.route('/register', methods=['POST'])
 def register():
     print(request.headers)
-    print(request.stream.read())
+    print(request.form.get('name', default='None'))
+    print(request.form.get('password', default='None'))
     return 'welcome'
 
 
