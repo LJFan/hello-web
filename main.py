@@ -41,6 +41,10 @@ def register():
     return 'Welcome ' + name + '!'
 
 
+@app.route('/<anything>/')
+def give(anything):
+    return anything
+
 @app.route('/shutdown')
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
