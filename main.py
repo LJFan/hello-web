@@ -3,7 +3,7 @@ import time
 import flask
 
 PORT = '9999'
-DEBUG = False
+DEBUG = True
 
 app = Flask(__name__)
 
@@ -45,13 +45,10 @@ def register():
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     func()
-    return 'Trying to shutdown!'
-
+    return 'Server shutting down...'
 
 
 if __name__ == '__main__':
     print('Web Server is running...')
-    if DEBUG:
-        app.run(port='9999', debug=True)
-    else:
-        app.run(host='0.0.0.0', port=PORT)
+    app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
+
