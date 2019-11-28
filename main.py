@@ -1,7 +1,7 @@
-from flask import Flask, request
 import time
-import pyodbc
 
+import pyodbc
+from flask import Flask, request
 
 PORT = '9999'
 DEBUG = True
@@ -65,19 +65,21 @@ def sql():
     if not query:
         return 'Query is empty.'
     print(query)
-    try:
-        cursor.execute(query)
-        row = cursor.fetchall()
-    except:
-        return 'Query failed!'
-    return '<p>' + query + '</p>\n' \
-           + '\n'.join('<p>' + str(r) +'</p>' for r in row)
+    cursor.execute(query)
+    row = cursor.fetchall()
+    return '<p>' + query + '</p>\n' + \
+           '<p># of lines:' + str(len(row)) + '</p>\n' + \
+           '\n'.join('<p>' + str(r) + '</p>' for r in row)
 
 
 if __name__ == '__main__':
     print('Connecting to SQL Server')
     cnxn = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+        'DRIVER={ODBC Driver 17 for SQL Server};'
+        'SERVER=' + server + ';' +
+        'DATABASE=' + database + ';' +
+        'UID=' + username + ';' +
+        'PWD=' + password)
     cursor = cnxn.cursor()
 
     print('Web Server is running...')
