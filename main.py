@@ -1,9 +1,15 @@
 from flask import Flask, request
 import time
-import flask
+import pyodbc
+
 
 PORT = '9999'
 DEBUG = True
+
+server = 'localhost'
+database = 'School'
+username = 'user'
+password = '1234'
 
 app = Flask(__name__)
 
@@ -45,6 +51,7 @@ def register():
 def give(anything):
     return anything
 
+
 @app.route('/shutdown')
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
@@ -52,7 +59,26 @@ def shutdown():
     return 'Server shutting down...'
 
 
+@app.route('/sql')
+def sql():
+    query = request.args.get('query', '')
+    if not query:
+        return 'Query is empty.'
+    print(query)
+    try:
+        cursor.execute(query)
+        row = cursor.fetchall()
+    except:
+        return 'Query failed!'
+    return '<p>' + query + '</p>\n' \
+           + '\n'.join('<p>' + str(r) +'</p>' for r in row)
+
+
 if __name__ == '__main__':
+    print('Connecting to SQL Server')
+    cnxn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+    cursor = cnxn.cursor()
+
     print('Web Server is running...')
     app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
-
