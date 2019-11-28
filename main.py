@@ -1,11 +1,16 @@
 from flask import Flask, request
+import time
+
+PORT = '9999'
+DEBUG = False
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return 'Hello World! ' + \
+           time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
 
 @app.route('/chinese')
@@ -28,12 +33,22 @@ def par():
 @app.route('/register', methods=['POST'])
 def register():
     print(request.headers)
-    print(request.form.get('name', default='None'))
-    print(request.form.get('password', default='None'))
-    return 'welcome'
+    name = request.form.get('name', default='None')
+    password = request.form.get('password', default='None')
+    print(name)
+    print(password)
+    return 'Welcome ' + name + '!'
+
+
+@app.route('/abort')
+def abort():
+    exit(0)
+
 
 
 if __name__ == '__main__':
     print('Web Server is running...')
-    # app.run(port='9999')
-    app.run(host='0.0.0.0', port='9999')
+    if DEBUG:
+        app.run(port='9999', debug=True)
+    else:
+        app.run(host='0.0.0.0', port=PORT)
