@@ -1,5 +1,6 @@
 from flask import Flask, request
 import time
+import flask
 
 PORT = '9999'
 DEBUG = False
@@ -40,9 +41,11 @@ def register():
     return 'Welcome ' + name + '!'
 
 
-@app.route('/abort')
-def abort():
-    exit(0)
+@app.route('/shutdown')
+def shutdown():
+    func = request.environ.get('werkzeug.server.shutdown')
+    func()
+    return 'Trying to shutdown!'
 
 
 
