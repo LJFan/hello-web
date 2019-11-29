@@ -6,7 +6,7 @@ from flask import Flask, request
 PORT = '9999'
 DEBUG = True
 
-MAXROW = 1000
+MAX_ROW = 1000
 
 server = 'localhost'
 database = 'School'
@@ -68,14 +68,20 @@ def sql():
         return 'Query is empty.'
     print(query)
     cursor.execute(query)
-    row = cursor.fetchall()
-    n = len(row)
-    if n > MAXROW:
-        row = row[:MAXROW]
-        row.append("Only show first" + str(MAXROW) + ' lines...')
-    return '<p>' + query + '</p>\n' + \
-           '<p># of lines:' + str(n) + '</p>\n' + \
-           '\n'.join('<p>' + str(r) + '</p>' for r in row)
+
+    ret = [query, 'rowcount: ' + str(cursor.rowcount)]
+    try:
+        for i in range(MAX_ROW):
+            r = cursor.fetchone()
+            if r is None:
+                break
+            ret.append(str(r))
+        else:
+            ret.append('Only show first' + str(MAX_ROW) + ' lines...')
+    except pyodbc.ProgrammingError:
+        ret.append('No result')
+
+    return '\n'.join(['<p>' + r + '</p>' for r in ret])
 
 
 if __name__ == '__main__':
