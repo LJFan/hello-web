@@ -6,6 +6,8 @@ from flask import Flask, request
 PORT = '9999'
 DEBUG = True
 
+MAXROW = 1000
+
 server = 'localhost'
 database = 'School'
 username = 'user'
@@ -67,8 +69,12 @@ def sql():
     print(query)
     cursor.execute(query)
     row = cursor.fetchall()
+    n = len(row)
+    if n > MAXROW:
+        row = row[:MAXROW]
+        row.append("Only show first" + str(MAXROW) + ' lines...')
     return '<p>' + query + '</p>\n' + \
-           '<p># of lines:' + str(len(row)) + '</p>\n' + \
+           '<p># of lines:' + str(n) + '</p>\n' + \
            '\n'.join('<p>' + str(r) + '</p>' for r in row)
 
 
