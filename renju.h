@@ -65,18 +65,19 @@ class Renju {
                 Map[num] = 1;
                 alpha = max(alpha, AlphaBeta(deep - 1, !player, alpha, beta));
                 Map[num] = 0;
-                if (beta <= alpha) return alpha;
+                if (beta <= alpha) break;
             }
+            return alpha;
         } else {
             for (int num = 0; num < COL2; num++) {
                 if (!shouldSearch(num, deep)) continue;
                 Map[num] = 2;
                 beta = min(beta, AlphaBeta(deep - 1, !player, alpha, beta));
                 Map[num] = 0;
-                if (beta <= alpha) return beta;
+                if (beta <= alpha) break;
             }
+            return beta;
         }
-        return (alpha + beta) / 2;
     }
     ll eval(int player) const {
         ll ret = 0;
