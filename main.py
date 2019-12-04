@@ -1,5 +1,7 @@
 import time
+import random
 
+import json
 import pyodbc
 from flask import Flask, request
 
@@ -82,6 +84,18 @@ def sql():
         ret.append('No result')
 
     return '\n'.join(['<p>' + r + '</p>' for r in ret])
+
+
+@app.route('/renju')
+def renju():
+    board = request.args.get('board')
+    space = []
+    for i in range(1, len(board)):
+        if board[i] == '0':
+            space.append(i - 1)
+    ret = -1 if len(space) == 0 else random.choice(space);
+    time.sleep(.5);
+    return "successCallback(" + json.dumps(ret) + ")"
 
 
 if __name__ == '__main__':
