@@ -1,20 +1,15 @@
 
-#include<cstring>
-#include<cassert>
+//g++ renju.cpp -std=c++14 -O3 -Wall -shared -o renju.so
+//g++ renju.cpp -std=c++14 -O3 -Wall -o renju.exe && renju.exe
+#include "renju.h"
 
-using namespace std;
-
-int solve(const char *Map) {
-    int n=strlen(Map);
-    for (int i=1;i<n;i++) {
-        if (Map[i]=='0') return i-1;
-    }
-    return -1;
+extern "C" int solve(const char *str) {
+    Renju renju(str);
+    return renju.put();
 }
 
-extern "C" {
-    int renju(const char *Map) {
-        return 2;
-        return solve(Map);
-    }
+int main() {
+    printf("%d\n",solve(
+        "W0000000000000000000000000000000000000000000000000000000000021111000000020000000002000000000000000000000000000000000000000"
+    ));
 }

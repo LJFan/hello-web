@@ -1,12 +1,15 @@
-import time
-import random
-
 import json
+import random
+import time
+from ctypes import CDLL
+
 import pyodbc
 from flask import Flask, request
 
+renju_kernel = CDLL("renju.so")
+
 PORT = '9999'
-DEBUG = True
+DEBUG = False
 
 MAX_ROW = 1000
 
@@ -89,12 +92,8 @@ def sql():
 @app.route('/renju')
 def renju():
     board = request.args.get('board')
-    space = []
-    for i in range(1, len(board)):
-        if board[i] == '0':
-            space.append(i - 1)
-    ret = -1 if len(space) == 0 else random.choice(space);
-    time.sleep(.5);
+    ret = renju_kernel.solve(board.encode('ascii'))
+    print('ret = ', ret)
     return "successCallback(" + json.dumps(ret) + ")"
 
 
