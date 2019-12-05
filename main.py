@@ -65,6 +65,7 @@ def shutdown():
     func()
     return 'Server shutting down...'
 
+
 """
 @app.route('/sql')
 def sql():
@@ -89,13 +90,15 @@ def sql():
     return '\n'.join(['<p>' + r + '</p>' for r in ret])
 """
 
+
 @app.route('/renju')
 def renju():
     board = request.args.get('board')
-    time_start = time.time();
-    ret = renju_kernel.solve(board.encode('ascii'))
-    print('ret = ', ret, ", time used = ", time.time() - time_start)
-    return "successCallback(" + json.dumps(ret) + ")"
+    time_start = time.time()
+    put = renju_kernel.solve(board.encode('ascii'))
+    print('put =', put, ", time =", time.time() - time_start)
+    time.sleep(0.01)
+    return request.args.get('callback', 'None') + "(" + json.dumps(put) + ")"
 
 
 if __name__ == '__main__':
