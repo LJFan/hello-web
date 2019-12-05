@@ -49,13 +49,14 @@ class Renju {
             Map[num] = 0;
         }
         sort(childlist.begin(), childlist.end(), greater<Scr_Pos>());
-        
+
         int ret = -1;
-        auto ret_eval = -inf;
+        auto ret_eval = -inf - 1;
         for (auto &&child : childlist) {
             auto &&num = child.second;
             Map[num] = 1;
             auto now_eval = AlphaBeta(deep, 1, ret_eval, inf);
+            // printf("%d: %lld\n", num, now_eval);
             Map[num] = 0;
             if (now_eval > ret_eval) {
                 ret_eval = now_eval;
@@ -67,13 +68,13 @@ class Renju {
 
    private:
     bool shouldSearch(int num, int deep) {
-        const static int outer = 2, top = 2;
+        const static int deep2level[] = {0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3};
         if (Map[num]) return 0;
         int x0 = num / COL, y0 = num % COL;
-        for (int x = max(0, x0 - min(top, (deep + outer) / 2));
-             x <= min(COL - 1, x0 + min(top, (deep + outer) / 2)); x++) {
-            for (int y = max(0, y0 - min(top, (deep + outer) / 2));
-                 y <= min(COL - 1, y0 + min(top, (deep + outer) / 2)); y++) {
+        for (int x = max(0, x0 - deep2level[deep]);
+             x <= min(COL - 1, x0 + deep2level[deep]); x++) {
+            for (int y = max(0, y0 - deep2level[deep]);
+                 y <= min(COL - 1, y0 + deep2level[deep]); y++) {
                 if (x == x0 && y == y0) continue;
                 if (Map2[x][y]) return 1;
             }
@@ -82,7 +83,7 @@ class Renju {
     }
     ll AlphaBeta(int deep, int player, ll alpha, ll beta) {
         {
-            static const ll WIN = 1ll << 35;
+            static const ll WIN = 1ll << 31;
             auto e = eval(player);
             if (e <= -WIN || e >= WIN || deep == 0) return e;
         }
@@ -121,7 +122,6 @@ class Renju {
     }
     ll eval(int player) const {
         ll ret = 0;
-        const static int mod = 3 * 3 * 3 * 3 * 3;
         for (int x = 0; x < COL; x++) {
             int code1 = 0, code2 = 0;
             for (int y = 0; y < N - 1; y++) {
@@ -129,8 +129,8 @@ class Renju {
                 code2 = code2 * 3 + Map2[y][x];
             }
             for (int y = N - 1; y < COL; y++) {
-                (code1 = code1 * 3 + Map2[x][y]) %= mod;
-                (code2 = code2 * 3 + Map2[y][x]) %= mod;
+                (code1 = code1 * 3 + Map2[x][y]) %= M;
+                (code2 = code2 * 3 + Map2[y][x]) %= M;
                 ret += TABLE[code1][player] + TABLE[code2][player];
             }
         }
@@ -142,7 +142,7 @@ class Renju {
                 x++, y++;
             }
             for (; x < COL; x++, y++) {
-                (code = code * 3 + Map2[x][y]) %= mod;
+                (code = code * 3 + Map2[x][y]) %= M;
                 ret += TABLE[code][player];
             }
         }
@@ -154,7 +154,7 @@ class Renju {
                 x++, y++;
             }
             for (; y < COL; x++, y++) {
-                (code = code * 3 + Map2[x][y]) %= mod;
+                (code = code * 3 + Map2[x][y]) %= M;
                 ret += TABLE[code][player];
             }
         }
@@ -166,7 +166,7 @@ class Renju {
                 x--, y++;
             }
             for (; x >= 0; x--, y++) {
-                (code = code * 3 + Map2[x][y]) %= mod;
+                (code = code * 3 + Map2[x][y]) %= M;
                 ret += TABLE[code][player];
             }
         }
@@ -179,7 +179,7 @@ class Renju {
                 x--, y++;
             }
             for (; y < COL; x--, y++) {
-                (code = code * 3 + Map2[x][y]) %= mod;
+                (code = code * 3 + Map2[x][y]) %= M;
                 ret += TABLE[code][player];
             }
         }
@@ -207,8 +207,11 @@ class Renju {
                 return;
             }
         }
-        for (int i = 0; i < COL2; i++) {
-            if (Map[i] != 0) Map[i] ^= 3;
+        if (turn ==2) {
+            turn =1;
+            for (int i = 0; i < COL2; i++) {
+                if (Map[i] != 0) Map[i] ^= 3;
+            }
         }
     }
 };

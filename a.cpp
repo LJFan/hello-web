@@ -80,8 +80,8 @@ int main() {
 		if (w==3) f[u][0]=f[u][1]=0;          //draw
 	}
 //	set<int> S;
-	printf("static const int N=%d;\n",N);
-	printf("static const long long TABLE[%d][2] = {\n",M);
+	printf("static const int N=%d, M=%d;\n",N,M);
+	printf("static const long long TABLE[M][2] = {\n");
 	for (int u=0;u<M;u++) for (int v=0;v<2;v++) {
 		int t=max(-WIN_POINT,min(WIN_POINT,dfs(u,v)));
 		if (t==0) printf(" 0      , ");

@@ -1,5 +1,5 @@
-static const int N=5;
-static const long long TABLE[243][2] = {
+static const int N=5, M=243;
+static const long long TABLE[M][2] = {
  0      ,  0      ,  0      ,  0      ,  0      ,  0      ,  0      ,  0      , +1ll<<12, -1ll<< 4, +1ll<<12, -1ll<<12,  0      ,  0      , +1ll<<12, -1ll<<12, +1ll<< 4, -1ll<<12,  0      ,  0      , 
 +1ll<<12, -1ll<< 4, +1ll<<12, -1ll<<12, +1ll<<12, -1ll<< 4, +1ll<< 8,  0      , +1ll<< 8, -1ll<< 8, +1ll<<12, -1ll<<12, +1ll<< 8, -1ll<< 8, +1ll<< 8, -1ll<< 8,  0      ,  0      , +1ll<<12, -1ll<<12, 
 +1ll<< 4, -1ll<<12, +1ll<<12, -1ll<<12, +1ll<< 8, -1ll<< 8, +1ll<< 8, -1ll<< 8, +1ll<< 4, -1ll<<12, +1ll<< 8, -1ll<< 8,  0      , -1ll<< 8,  0      ,  0      , +1ll<<12, -1ll<< 4, +1ll<<12, -1ll<<12, 
