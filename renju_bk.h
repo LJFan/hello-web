@@ -1,123 +1,82 @@
 #pragma once
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <functional>
-#include <utility>
+#include <map>
 #include "tab.h"
 using namespace std;
 using ll = long long;
-using Scr_Pos = pair<ll, int>;
 
 const int COL = 11;
 const int COL2 = COL * COL;
 const ll inf = 1e14;
 
-template <class T, int N>
-class Vector {
-    T a[N];
-    int n = 0;
-
-   public:
-    T *begin() { return a; }
-    T *end() { return a + n; }
-    void push_back(const T &t) { a[n++] = t; }
-};
-
 class Renju {
     int Map2[COL][COL];
-    int *const Map = Map2[0];
+    int *const Map;
     int turn;
-    bool error = 0;
+    bool error;
 
    public:
-    Renju(const char *str) {
+    Renju(const char *str) : Map(Map2[0]) {
+        error = 0;
         set_turn(str);
         set_Map(str + 1);
     }
 
     int put() {
-        const int deep = 5;
         if (error) return -1;
-
-        Vector<Scr_Pos, COL2> childlist;
-        for (int num = 0; num < COL2; num++) {
-            if (!shouldSearch(num, deep)) continue;
-            Map[num] = 1;
-            childlist.push_back({eval(0), num});
-            Map[num] = 0;
-        }
-        sort(childlist.begin(), childlist.end(), greater<Scr_Pos>());
-        
         int ret = -1;
         auto ret_eval = -inf;
-        for (auto &&child : childlist) {
-            auto &&num = child.second;
+        for (int num = 0; num < COL2; num++) {
+            if (!shouldSearch(num, 3)) continue;
             Map[num] = 1;
-            auto now_eval = AlphaBeta(deep, 1, ret_eval, inf);
-            Map[num] = 0;
+            // printf("%d:", num);
+            auto now_eval = AlphaBeta(3, 1);
+            // printf("%d: %lld\n", num, now_eval);
             if (now_eval > ret_eval) {
                 ret_eval = now_eval;
                 ret = num;
             }
+            Map[num] = 0;
         }
         return ret;
     }
 
    private:
     bool shouldSearch(int num, int deep) {
-        const static int outer = 2, top = 2;
         if (Map[num]) return 0;
         int x0 = num / COL, y0 = num % COL;
-        for (int x = max(0, x0 - min(top, (deep + outer) / 2));
-             x <= min(COL - 1, x0 + min(top, (deep + outer) / 2)); x++) {
-            for (int y = max(0, y0 - min(top, (deep + outer) / 2));
-                 y <= min(COL - 1, y0 + min(top, (deep + outer) / 2)); y++) {
+        for (int x = max(0, x0 - (deep + 2) / 2);
+             x <= min(COL - 1, x0 + (deep + 2) / 2); x++) {
+            for (int y = max(0, y0 - (deep + 2) / 2);
+                 y <= min(COL - 1, y0 + (deep + 2) / 2); y++) {
                 if (x == x0 && y == y0) continue;
                 if (Map2[x][y]) return 1;
             }
         }
         return 0;
     }
-    ll AlphaBeta(int deep, int player, ll alpha, ll beta) {
-        {
-            static const ll WIN = 1ll << 35;
-            auto e = eval(player);
-            if (e <= -WIN || e >= WIN || deep == 0) return e;
-        }
-        Vector<Scr_Pos, COL2> childlist;
-        for (int num = 0; num < COL2; num++) {
-            if (!shouldSearch(num, deep)) continue;
-            if (deep > 1) {
-                Map[num] = player + 1;
-                childlist.push_back({eval(player), num});
-                Map[num] = 0;
-            } else {
-                childlist.push_back({0, num});
-            }
-        }
+    ll AlphaBeta(int deep, int player, ll alpha = -inf, ll beta = inf) {
+        if (deep == 0) return eval(player);
         if (player == 0) {
-            sort(childlist.begin(), childlist.end(), greater<Scr_Pos>());
-            for (auto &&child : childlist) {
-                auto &&num = child.second;
+            for (int num = 0; num < COL2; num++) {
+                if (!shouldSearch(num, deep)) continue;
                 Map[num] = 1;
                 alpha = max(alpha, AlphaBeta(deep - 1, !player, alpha, beta));
                 Map[num] = 0;
-                if (beta <= alpha) break;
+                if (beta <= alpha) return alpha;
             }
-            return alpha;
         } else {
-            sort(childlist.begin(), childlist.end(), less<Scr_Pos>());
-            for (auto &&child : childlist) {
-                auto &&num = child.second;
+            for (int num = 0; num < COL2; num++) {
+                if (!shouldSearch(num, deep)) continue;
                 Map[num] = 2;
                 beta = min(beta, AlphaBeta(deep - 1, !player, alpha, beta));
                 Map[num] = 0;
-                if (beta <= alpha) break;
+                if (beta <= alpha) return beta;
             }
-            return beta;
         }
+        return (alpha + beta) / 2;
     }
     ll eval(int player) const {
         ll ret = 0;
@@ -172,7 +131,7 @@ class Renju {
         }
 
         for (int y_ = 1; y_ <= COL - N; y_++) {
-            int x = COL - 1, y = y_;
+            int x = COL-1, y = y_;
             int code = 0;
             for (int i = 0; i < N - 1; i++) {
                 code = code * 3 + Map2[x][y];

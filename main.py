@@ -65,7 +65,7 @@ def shutdown():
     func()
     return 'Server shutting down...'
 
-
+"""
 @app.route('/sql')
 def sql():
     query = request.args.get('query', '')
@@ -87,17 +87,19 @@ def sql():
         ret.append('No result')
 
     return '\n'.join(['<p>' + r + '</p>' for r in ret])
-
+"""
 
 @app.route('/renju')
 def renju():
     board = request.args.get('board')
+    time_start = time.time();
     ret = renju_kernel.solve(board.encode('ascii'))
-    print('ret = ', ret)
+    print('ret = ', ret, ", time used = ", time.time() - time_start)
     return "successCallback(" + json.dumps(ret) + ")"
 
 
 if __name__ == '__main__':
+    """
     print('Connecting to SQL Server')
     cnxn = pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
@@ -106,6 +108,6 @@ if __name__ == '__main__':
         'UID=' + username + ';' +
         'PWD=' + password)
     cursor = cnxn.cursor()
-
+    """
     print('Web Server is running...')
     app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
