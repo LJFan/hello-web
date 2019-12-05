@@ -38,12 +38,12 @@ class Renju {
     }
 
     int put() {
-        const int deep = 5;
+        const int max_deep = 5;
         if (error) return -1;
 
         Vector<Scr_Pos, COL2> childlist;
         for (int num = 0; num < COL2; num++) {
-            if (!shouldSearch(num, deep)) continue;
+            if (!shouldSearch(num, max_deep)) continue;
             Map[num] = 1;
             childlist.push_back({eval(0), num});
             Map[num] = 0;
@@ -55,7 +55,7 @@ class Renju {
         for (auto &&child : childlist) {
             auto &&num = child.second;
             Map[num] = 1;
-            auto now_eval = AlphaBeta(deep, 1, ret_eval, inf);
+            auto now_eval = AlphaBeta(max_deep, 1, ret_eval, inf);
             // printf("%d: %lld\n", num, now_eval);
             Map[num] = 0;
             if (now_eval > ret_eval) {
