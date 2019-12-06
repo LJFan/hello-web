@@ -129,6 +129,7 @@ class Renju {
     ll eval(int player) const {
         ll ret = 0;
         if (ret) return ret;
+        // 计算横竖的得分
         for (int x = 0; x < COL; x++) {
             int code1 = 0, code2 = 0;
             for (int y = 0; y < N - 1; y++) {
@@ -141,6 +142,7 @@ class Renju {
                 ret += TABLE[code1][player] + TABLE[code2][player];
             }
         }
+        //计算斜向下的得分 y=0
         for (int x_ = 0; x_ < COL - N; x_++) {
             int x = x_, y = 0;
             int code = 0;
@@ -153,6 +155,7 @@ class Renju {
                 ret += TABLE[code][player];
             }
         }
+        //计算斜向下的得分 x=0
         for (int y_ = 1; y_ <= COL - N; y_++) {
             int x = 0, y = y_;
             int code = 0;
@@ -165,7 +168,8 @@ class Renju {
                 ret += TABLE[code][player];
             }
         }
-        for (int x_ = N; x_ < COL; x_++) {
+        //计算斜向上的得分 y=0
+        for (int x_ = N - 1; x_ < COL; x_++) {
             int x = x_, y = 0;
             int code = 0;
             for (int i = 0; i < N - 1; i++) {
@@ -177,6 +181,7 @@ class Renju {
                 ret += TABLE[code][player];
             }
         }
+        //计算斜向上的得分 x=COL-1
         for (int y_ = 1; y_ <= COL - N; y_++) {
             int x = COL - 1, y = y_;
             int code = 0;

@@ -114,3 +114,4 @@ if __name__ == '__main__':
     """
     print('Web Server is running...')
     app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
+    # app.run(port=PORT, debug=DEBUG)
